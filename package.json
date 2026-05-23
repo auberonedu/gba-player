@@ -49,5 +49,6 @@
     "typescript-eslint": "^8.56.1",
     "webpack": "^5.105.3",
     "webpack-cli": "^6.0.1"
-  }
+  },
+  "license": "GPL-3.0-or-later"
 }
