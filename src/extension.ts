@@ -72,8 +72,8 @@ class GbaEditorProvider implements vscode.CustomReadonlyEditorProvider {
 	<meta http-equiv="Content-Security-Policy" content="${csp}">
 	<title>GBA Preview</title>
 	<style>
-		body { margin: 0; background: #000; color: #fff; font-family: sans-serif; }
-		#game { width: 100vw; height: 100vh; }
+		html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+		#game { width: 100%; height: 100%; }
 	</style>
 </head>
 <body>
