@@ -1,26 +1,65 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "gba-player" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('gba-player.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from GBA Player!');
-	});
-
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(
+		vscode.window.registerCustomEditorProvider(
+			'gba-player.gba',
+			new GbaEditorProvider(context),
+			{
+				webviewOptions: { retainContextWhenHidden: true },
+				supportsMultipleEditorsPerDocument: false,
+			}
+		)
+	);
 }
 
-// This method is called when your extension is deactivated
+class GbaEditorProvider implements vscode.CustomReadonlyEditorProvider {
+	constructor(private readonly context: vscode.ExtensionContext) {}
+
+	openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {
+		return { uri, dispose: () => {} };
+	}
+
+	resolveCustomEditor(
+		document: vscode.CustomDocument,
+		webviewPanel: vscode.WebviewPanel
+	): void {
+		const mediaRoot = vscode.Uri.joinPath(this.context.extensionUri, 'media');
+
+		webviewPanel.webview.options = {
+			enableScripts: true,
+			localResourceRoots: [mediaRoot],
+		};
+
+		const ejsBase = webviewPanel.webview.asWebviewUri(
+			vscode.Uri.joinPath(mediaRoot, 'emulatorjs')
+		);
+
+		webviewPanel.webview.html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>GBA Preview</title>
+	<style>
+		body { margin: 0; background: #000; color: #fff; font-family: sans-serif; }
+		#game { width: 100vw; height: 100vh; }
+	</style>
+</head>
+<body>
+	<div id="game"></div>
+	<script>
+		window.EJS_player = '#game';
+		window.EJS_core = 'gba';
+		window.EJS_pathtodata = '${ejsBase}/';
+		// No ROM yet — we'll wire that up next.
+		window.EJS_gameUrl = '';
+	</script>
+	<script src="${ejsBase}/loader.js"></script>
+</body>
+</html>`;
+	}
+}
+
 export function deactivate() {}

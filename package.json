@@ -12,12 +12,18 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "gba-player.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+    "customEditors": [
+    {
+      "viewType": "gba-player.gba",
+      "displayName": "GBA Preview",
+      "selector": [
+        {
+          "filenamePattern": "*.gba"
+        }
+      ],
+      "priority": "default"
+    }
+  ]
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
