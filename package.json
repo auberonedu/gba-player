@@ -2,6 +2,8 @@
   "name": "gba-player",
   "displayName": "GBA Player",
   "description": "GBA Emulator",
+  "publisher": "auberonedu",
+  "repository": "https://github.com/auberonedu/gba-player",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.120.0"
